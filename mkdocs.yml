@@ -1,0 +1,12 @@
+site_name: PyDeus
+theme:
+  palette:
+    scheme: slate
+    primary: teal
+    accent: grey
+  name: material
+nav:
+  - index.md
+  - Package Structure: structure.md
+  - Low-Level Usage: low_level.md
+  - Advanced Usage: advanced_level.md

@@ -1,0 +1,77 @@
+name: Tests
+
+on:
+  push:
+    paths:
+      - ".github/workflows/tests.yml"
+      - "pydeus/**"
+      - "tests/**"
+      - "pyproject.toml"
+      - "poetry.lock"
+  pull_request:
+    paths:
+      - ".github/workflows/tests.yml"
+      - "pydeus/**"
+      - "tests/**"
+      - "pyproject.toml"
+      - "poetry.lock"
+
+env:
+  POETRY_VIRTUALENVS_IN_PROJECT: true
+  POETRY_HOME: ~/poetry
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+        python-version:
+          - "3.7"
+          - "3.11"
+
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Get code
+        uses: actions/checkout@v3
+
+      - name: Setup python ${{ matrix.python-version }} on ${{ matrix.os }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Load cached venv
+        id: cached-venv
+        uses: actions/cache@v3
+        with:
+          key: venv-${{ matrix.python-version }}-${{ runner.os }}-${{ hashFiles('poetry.lock') }}
+          path: .venv
+
+      - name: Load cached poetry installation
+        id: cached-poetry
+        uses: actions/cache@v3
+        with:
+          key: poetry-${{ matrix.python-version }}-${{ runner.os }}-${{ hashFiles('poetry.lock') }}
+          path: ~/poetry
+
+      - name: Install poetry
+        if: steps.cached-poetry.outputs.cache-hit != 'true'
+        run: curl https://install.python-poetry.org | python -
+
+      - name: Add poetry to env vars
+        run: echo "$POETRY_HOME/bin" >> $GITHUB_PATH
+
+      - name: Install dependecies
+        run: poetry install --with dev
+
+      - name: Run ruff
+        run: poetry run ruff .
+
+      - name: Run tests
+        run: poetry run pytest

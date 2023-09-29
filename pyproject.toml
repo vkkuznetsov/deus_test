@@ -1,0 +1,54 @@
+[tool.poetry]
+name = "pydeus"
+version = "0.0.1"
+description = "The progressive, easy-to-use, asynchronouse, customizable API wrapper for https://utmn.modeus.org"
+authors = ["Twylix <zemskov271@gmail.com>, MaHryCT3 <mahryct123@gmail.com>"]
+license = "MIT License"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+pydantic = "^1.10.2"
+beautifulsoup4 = "^4.11.1"
+httpx = "^0.23.0"
+PyJWT = "^2.5.0"
+cryptography = "^38.0.1"
+
+[tool.poetry.group.dev.dependencies]
+black = "^22.8.0"
+pytest = "^7.2.1"
+pytest-aio = "^1.5.0"
+ruff = "^0.0.252"
+pre-commit = "^2.1.1"
+
+[tool.poetry.group.debug.dependencies]
+debugpy = "^1.6.3"
+
+
+[tool.poetry.group.docs.dependencies]
+mkdocs-material = "^8.5.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 99
+select = ['Q', 'F', 'I', 'ANN', 'B', 'C4', 'TID', 'ARG', 'PLR']
+ignore = ['ANN101', 'ANN204', 'ANN401', 'ANN002', 'ANN003', 'PLR0913']  
+# ANN - https://beta.ruff.rs/docs/rules/#flake8-annotations-ann, 
+# PLR0913 - Too many arguments
+
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"] # Unused import
+"tests/*" = ['ANN']  # Annotations
+
+[tool.ruff.flake8-quotes]
+docstring-quotes = "double"
+inline-quotes = "single"
+
+[tool.black]
+skip-string-normalization = true
+exclude = '(\.git|\.venv|\.vscode)'
+line-length = 99
